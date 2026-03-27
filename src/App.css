@@ -1,0 +1,375 @@
+/* --- 1. GLOBAL SETTINGS & VARIABLES --- */
+:root {
+  --neon-blue: #00f2ff;
+  --hologram-cyan: #00e5ff;
+  --hologram-amber: #ffaa00;
+  --dark-bg: #020508;
+  --dark-glass: rgba(5, 10, 15, 0.9);
+  --glass-reflection: rgba(255, 255, 255, 0.05);
+}
+
+body {
+  margin: 0;
+  background-color: var(--dark-bg);
+  background-image: radial-gradient(circle at 50% 50%, #0a1b2a 0%, #020508 100%);
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* --- 2. MAIN CONTAINER --- */
+.game-container {
+  width: 420px;
+  background: radial-gradient(circle at 50% 50%, #0a1b2a 0%, #020508 100%);
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 1);
+  backdrop-filter: blur(5px);
+  position: relative;
+}
+
+.attempts-badge {
+  text-align: right;
+  color: var(--neon-blue);
+  font-size: 0.75rem;
+  font-weight: 900;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--neon-blue);
+}
+
+/* --- 3. THE HOLOGRAM DISPLAY (PADLOCKS) --- */
+.padlock-display {
+  height: 180px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  position: relative;
+  background: var(--dark-glass);
+  border: 2px solid rgba(0, 242, 255, 0.3);
+  box-shadow: 
+    0 15px 30px rgba(0, 0, 0, 1),
+    inset 0 0 30px rgba(0, 242, 255, 0.1);
+}
+
+.padlock-display::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--glass-reflection) 0%, rgba(255,255,255,0) 40%, var(--glass-reflection) 100%);
+  pointer-events: none;
+}
+
+.padlock-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.5s ease;
+}
+
+.padlock-unit .icon {
+  color: rgba(255, 255, 255, 0.1);
+  margin-bottom: 10px;
+}
+
+.padlock-unit p {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.8rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+/* EXACT MATCH (BLUE HOLOGRAM) */
+.padlock-unit.lit .icon {
+  color: var(--hologram-cyan);
+  filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 12px var(--hologram-cyan));
+  animation: hologramFloat 3s infinite ease-in-out;
+}
+.padlock-unit.lit p {
+  color: var(--hologram-cyan);
+  text-shadow: 0 0 8px var(--hologram-cyan);
+}
+
+/* MISPLACED (AMBER HOLOGRAM) */
+.padlock-unit.lit-alt .icon {
+  color: var(--hologram-amber);
+  filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 12px var(--hologram-amber));
+  animation: hologramFloat 3s infinite ease-in-out;
+}
+.padlock-unit.lit-alt p {
+  color: var(--hologram-amber);
+  text-shadow: 0 0 8px var(--hologram-amber);
+}
+
+/* --- 4. THE TUMBLER DIALS --- */
+.lock-interface {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.tumbler-column {
+  background: linear-gradient(180deg, #050a0f 0%, #1a2a3a 50%, #050a0f 100%);
+  border: 1px solid rgba(0, 242, 255, 0.4);
+  border-radius: 12px;
+  width: 70px;
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8);
+}
+
+.digit-display {
+  font-size: 3rem;
+  color: var(--neon-blue);
+  text-shadow: 0 0 20px var(--neon-blue);
+  font-weight: 900;
+}
+
+.arrow-btn {
+  background: none;
+  border: none;
+  color: var(--neon-blue);
+  cursor: pointer;
+  padding: 10px;
+  font-size: 1.2rem;
+  opacity: 0.5;
+}
+.arrow-btn:hover { opacity: 1; }
+
+/* --- 5. BIOMETRICS & LOGS --- */
+.scanner-section { margin-top: 20px; text-align: center; }
+
+.finger-btn {
+  background: none;
+  border: none;
+  color: var(--neon-blue);
+  filter: drop-shadow(0 0 10px var(--neon-blue));
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.finger-btn.won { color: #39ff14; filter: drop-shadow(0 0 20px #39ff14); }
+.finger-btn.failed { color: #ff3131; filter: drop-shadow(0 0 20px #ff3131); }
+
+.history-log {
+  margin-top: 25px;
+  background: rgba(0, 0, 0, 0.4);
+  border-left: 3px solid var(--neon-blue);
+  padding: 12px;
+  height: 100px;
+  overflow-y: auto;
+  font-family: monospace;
+}
+
+.log-entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(0, 242, 255, 0.1);
+}
+
+.log-feedback-mini .blue { color: var(--neon-blue); margin-right: 10px; }
+.log-feedback-mini .amber { color: var(--hologram-amber); }
+
+/* --- 6. FOOTER --- */
+.sequence-footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  opacity: 0.3;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+}
+
+/* --- 7. ANIMATIONS --- */
+@keyframes hologramFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes hologramFlicker {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.9; }
+}
+
+/* --- BOOT SCREEN STYLES --- */
+.boot-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.terminal-window {
+  width: 400px;
+  border: 1px solid var(--neon-blue);
+  background: rgba(0, 242, 255, 0.05);
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+}
+
+.terminal-header {
+  border-bottom: 1px solid var(--neon-blue);
+  color: var(--neon-blue);
+  font-size: 0.7rem;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  letter-spacing: 2px;
+}
+
+.terminal-text {
+  color: var(--neon-blue);
+  font-size: 0.9rem;
+  margin: 5px 0;
+  text-shadow: 0 0 5px var(--neon-blue);
+}
+
+.progress-container {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-top: 20px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--neon-blue);
+  box-shadow: 0 0 10px var(--neon-blue);
+  transition: width 0.1s ease;
+}
+
+.percentage {
+  color: var(--neon-blue);
+  text-align: right;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+/* --- 8. SCAN LINE & INTERFACE POLISH --- */
+
+/* Container to hold the moving scan line */
+.lock-interface-wrapper {
+  position: relative;
+  overflow: hidden;
+  padding: 10px;
+  border-radius: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  margin: 10px 0;
+}
+
+
+/* Clips the digits so they look like they are inside a physical wheel */
+.digit-container {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* This makes the sliding animation work */
+}
+
+/* Status Text Polish */
+.status-text {
+  text-align: center;
+  font-size: 1rem;
+  letter-spacing: 4px;
+  margin: 15px 0;
+  height: 24px;
+  color: white;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Empty log styling */
+.empty-log {
+  opacity: 0.3;
+  font-size: 0.7rem;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Custom Scrollbar for the History Log */
+.history-log::-webkit-scrollbar {
+  width: 3px;
+}
+
+.history-log::-webkit-scrollbar-thumb {
+  background: var(--neon-blue);
+  border-radius: 10px;
+}
+
+@media (max-width: 450px) {
+  .game-container {
+    width: 90%;
+    padding: 15px;
+  }
+  .tumbler-column {
+    width: 60px;
+    height: 120px;
+  }
+  .digit-display {
+    font-size: 2rem;
+  }
+}
+.end-screen-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(2, 5, 8, 0.85); /* Deep dark tint */
+  backdrop-filter: blur(8px); /* Blur the game behind it */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  border-radius: 20px;
+}
+
+.end-card {
+  text-align: center;
+  padding: 30px;
+  border: 1px solid var(--neon-blue);
+  background: var(--dark-bg);
+  box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+}
+
+.end-card h1 {
+  color: var(--neon-blue);
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px var(--neon-blue);
+}
+
+.reboot-btn {
+  margin-top: 20px;
+  background: transparent;
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-blue);
+  padding: 10px 25px;
+  font-family: 'Orbitron', sans-serif;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.reboot-btn:hover {
+  background: var(--neon-blue);
+  color: black;
+  box-shadow: 0 0 20px var(--neon-blue);
+}
