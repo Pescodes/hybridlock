@@ -46,6 +46,7 @@ export const useGameStore = create(
 },
 =======
 =======
+>>>>>>> parent of ba38b62 (Made a whole lot of changes due to the rotary dial)
         // Play a subtle click sound when digit changes
         sfx.click.play();
         set((state) => {
