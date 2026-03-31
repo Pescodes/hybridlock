@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import { Howl } from 'howler';
 
 // --- SOUND ENGINE SETUP ---
+// Note: Make sure these files exist in your /public/sounds/ folder!
 const sfx = {
   scan: new Howl({ src: ['/sounds/scan-pulse.mp3'], volume: 0.4 }),
   success: new Howl({ src: ['/sounds/access-granted.mp3'], volume: 0.6 }),
@@ -16,7 +17,7 @@ export const useGameStore = create(
     (set, get) => ({
       // --- INITIAL STATE ---
       combination: [0, 0, 0, 0],
-      target: Array.from({ length: 4 }, () => Math.floor(Math.random() * 10)),
+      target: [3, 4, 6, 6],
       attempts: 10,
       gems: 5,
       history: [],
@@ -26,17 +27,8 @@ export const useGameStore = create(
       // --- ACTIONS ---
 
       setDigit: (index, value) => {
-        const { combination, isGameOver } = get();
-        
-        // Prevent interaction if game is over
-        if (isGameOver) return;
-
-        // Play sound only if value actually changed
-        if (combination[index] !== value) {
-          sfx.click.stop(); // Stop previous to prevent stacking during fast drags
-          sfx.click.play();
-        }
-
+        // Play a subtle click sound when digit changes
+        sfx.click.play();
         set((state) => {
           const newCombination = [...state.combination];
           newCombination[index] = value;
@@ -45,12 +37,13 @@ export const useGameStore = create(
       },
 
       useGem: () => {
-        const { gems, isGameOver } = get();
-        if (gems > 0 && isGameOver) {
+        const { gems } = get();
+        if (gems > 0) {
+          // Play the powerful reboot sound
           sfx.revive.play();
           set({
             gems: gems - 1,
-            attempts: 5, // Give them 5 more tries
+            attempts: 5,
             isGameOver: false,
           });
           return true;
@@ -59,10 +52,14 @@ export const useGameStore = create(
       },
 
       submitGuess: () => {
-        const { combination, target, attempts, history, isGameOver } = get();
+        const { combination, target, attempts, history } = get();
 
-        if (isGameOver || attempts <= 0) return;
+        if (attempts <= 0) {
+          set({ isGameOver: true });
+          return;
+        }
 
+        // Play the scan sound when fingerprint is "processed"
         sfx.scan.play();
 
         let exactMatches = 0;
@@ -100,6 +97,7 @@ export const useGameStore = create(
         const hasWon = exactMatches === 4;
         const hasLost = newAttempts <= 0 && !hasWon;
 
+        // Play appropriate feedback sound
         if (hasWon) {
           sfx.success.play();
         } else if (hasLost) {
@@ -114,25 +112,19 @@ export const useGameStore = create(
         });
       },
 
-      newGame: () => {
-        set({
-          combination: [0, 0, 0, 0],
-          target: Array.from({ length: 4 }, () => Math.floor(Math.random() * 10)),
-          attempts: 10,
-          history: [],
-          lastFeedback: { exactMatches: 0, misplaced: 0 },
-          isGameOver: false,
-        });
-      },
+      newGame: () => set({
+        combination: [0, 0, 0, 0],
+        target: Array.from({ length: 4 }, () => Math.floor(Math.random() * 10)),
+        attempts: 10,
+        history: [],
+        lastFeedback: { exactMatches: 0, misplaced: 0 },
+        isGameOver: false,
+      }),
     }),
     {
       name: 'hybridlock-storage',
-      // Persist gems and game status so they don't lose 'purchased' revives on refresh
-      partialize: (state) => ({ 
-        gems: state.gems, 
-        isGameOver: state.isGameOver,
-        target: state.target 
-      }),
+      // We persist gems AND isGameOver so the lockout survives a refresh
+      partialize: (state) => ({ gems: state.gems, isGameOver: state.isGameOver }),
     }
   )
 );
