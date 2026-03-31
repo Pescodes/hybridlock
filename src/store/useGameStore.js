@@ -27,6 +27,7 @@ export const useGameStore = create(
       // --- ACTIONS ---
 
       setDigit: (index, value) => {
+<<<<<<< HEAD
   const { combination, isGameOver } = get();
   if (isGameOver) return;
 
@@ -42,6 +43,16 @@ export const useGameStore = create(
     return { combination: newCombination };
   });
 },
+=======
+        // Play a subtle click sound when digit changes
+        sfx.click.play();
+        set((state) => {
+          const newCombination = [...state.combination];
+          newCombination[index] = value;
+          return { combination: newCombination };
+        });
+      },
+>>>>>>> parent of ba38b62 (Made a whole lot of changes due to the rotary dial)
 
       useGem: () => {
         const { gems } = get();
