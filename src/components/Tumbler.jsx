@@ -1,36 +1,46 @@
 import { useGameStore } from '../store/useGameStore'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronUp, ChevronDown } from 'lucide-react'
 
 const Tumbler = ({ index }) => {
   const { combination, setDigit } = useGameStore();
   const value = combination[index];
 
-  const adjust = (amt) => {
-    let newVal = (value + amt + 10) % 10;
-    setDigit(index, newVal);
+  const handleDrag = (_, info) => {
+    // Distance dragged (threshold). 30px move = 1 number change.
+    const threshold = 30;
+    const change = Math.round(info.offset.y / threshold);
+    
+    if (change !== 0) {
+      // (value - change) allows dragging UP to increase the number
+      let newVal = (value - change + 10) % 10;
+      if (newVal !== value) {
+        setDigit(index, newVal);
+      }
+    }
   };
 
   return (
     <div className="tumbler-column">
-      <button className="arrow-btn" onClick={() => adjust(1)}><ChevronUp /></button>
-      
-      <div className="digit-container">
-        <AnimatePresence mode="wait">
+      <motion.div
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={0.4}
+        onDrag={handleDrag}
+        className="digit-container"
+      >
+        <AnimatePresence mode="popLayout">
           <motion.div
             key={value}
             initial={{ y: 20, opacity: 0, filter: 'blur(5px)' }}
             animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
             exit={{ y: -20, opacity: 0, filter: 'blur(5px)' }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className="digit-display"
           >
             {value}
           </motion.div>
         </AnimatePresence>
-      </div>
-
-      <button className="arrow-btn" onClick={() => adjust(-1)}><ChevronDown /></button>
+      </motion.div>
     </div>
   );
 };

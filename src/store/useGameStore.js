@@ -27,14 +27,21 @@ export const useGameStore = create(
       // --- ACTIONS ---
 
       setDigit: (index, value) => {
-        // Play a subtle click sound when digit changes
-        sfx.click.play();
-        set((state) => {
-          const newCombination = [...state.combination];
-          newCombination[index] = value;
-          return { combination: newCombination };
-        });
-      },
+  const { combination, isGameOver } = get();
+  if (isGameOver) return;
+
+  // Only play sound if the number actually changes
+  if (combination[index] !== value) {
+    sfx.click.stop(); // Stops the previous sound immediately
+    sfx.click.play(); // Plays the new one
+  }
+
+  set((state) => {
+    const newCombination = [...state.combination];
+    newCombination[index] = value;
+    return { combination: newCombination };
+  });
+},
 
       useGem: () => {
         const { gems } = get();

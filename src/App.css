@@ -373,3 +373,39 @@ body {
   color: black;
   box-shadow: 0 0 20px var(--neon-blue);
 }
+
+/* --- ROTARY DIAL OVERRIDES --- */
+
+/* 1. Make the tumbler look like a physical cylinder */
+.tumbler-column {
+  height: 120px; /* Give it more room to "spin" */
+  justify-content: center;
+  position: relative;
+  touch-action: none; /* Crucial for mobile dragging */
+}
+
+/* 2. The Glass Window Mask */
+.digit-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* This creates the fade-out effect at top/bottom */
+  mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+  cursor: grab;
+}
+
+.digit-container:active {
+  cursor: grabbing;
+}
+
+/* 3. Stop text selection while dragging */
+.digit-display {
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+  font-size: 3.5rem; /* Larger for the dial */
+}
