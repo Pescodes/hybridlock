@@ -28,6 +28,7 @@ export const useGameStore = create(
 
       setDigit: (index, value) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
   const { combination, isGameOver } = get();
   if (isGameOver) return;
 
@@ -43,6 +44,7 @@ export const useGameStore = create(
     return { combination: newCombination };
   });
 },
+=======
 =======
         // Play a subtle click sound when digit changes
         sfx.click.play();
