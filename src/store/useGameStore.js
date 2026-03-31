@@ -27,26 +27,6 @@ export const useGameStore = create(
       // --- ACTIONS ---
 
       setDigit: (index, value) => {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  const { combination, isGameOver } = get();
-  if (isGameOver) return;
-
-  // Only play sound if the number actually changes
-  if (combination[index] !== value) {
-    sfx.click.stop(); // Stops the previous sound immediately
-    sfx.click.play(); // Plays the new one
-  }
-
-  set((state) => {
-    const newCombination = [...state.combination];
-    newCombination[index] = value;
-    return { combination: newCombination };
-  });
-},
-=======
-=======
->>>>>>> parent of ba38b62 (Made a whole lot of changes due to the rotary dial)
         // Play a subtle click sound when digit changes
         sfx.click.play();
         set((state) => {
@@ -55,7 +35,6 @@ export const useGameStore = create(
           return { combination: newCombination };
         });
       },
->>>>>>> parent of ba38b62 (Made a whole lot of changes due to the rotary dial)
 
       useGem: () => {
         const { gems } = get();
