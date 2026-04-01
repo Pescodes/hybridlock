@@ -34,11 +34,11 @@ function App() {
           <div className="padlock-display">
              <div className={`padlock-unit ${exactMatches > 0 ? 'lit' : ''}`}>
                 <Lock size={48} className="icon" />
-                <p>{exactMatches} EXACT</p>
+                <p>{exactMatches} </p>
              </div>
              <div className={`padlock-unit ${misplaced > 0 ? 'lit-alt' : ''}`}>
                 <Unlock size={48} className="icon" />
-                <p>{misplaced} MISPLACED</p>
+                <p>{misplaced}</p>
              </div>
           </div>
 
